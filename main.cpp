@@ -6,6 +6,8 @@
 // 3/22/2022 - Added populateMainMem and displayMainMem funcs
 // 3/22/2022 - Fixed populateMainMem func
 // 3/22/2022 - Added calcAddressValues func
+// 3/22/2022 - Changed cache to contain dynamic objects
+// 3/22/2022 - Added initialize cache function for setting tag and data
 
 // Standard Library Includes
 #include <iostream>
@@ -15,34 +17,53 @@
 
 void populateMainMem(short *, short);
 void displayMainMem(short *, short);
-void calcAddressValues(short);
+unsigned short calcAddressValues(short);
+void initializeCache(Word cache[]); //used for print test statements
 
+// TODO: Decide if this is needed? could just rely on array index value
 
 int main() {
 
     short main_mem[2048];
+    Word *cache = new Word[16];
+
     populateMainMem(main_mem, 2048);
     displayMainMem(main_mem, 2048);
+    initializeCache(cache);
+    std::cout << "Cache slot F has " <<std::hex<<std::uppercase <<cache[0xF]
+    .getSlotNumber() << " slot number."<<std::endl;
+    cache[0].printData();
 
-    short testAddress{0x14A};
+//    short testAddress{0x14A};
+//
+//    std::cout << "Test dirty bit: " <<
+//    std::hex<<std::uppercase<<cache[calcAddressValues
+//    (testAddress)]
+//    .getDirtyBit();
+//
+//    cache[calcAddressValues(testAddress)].printData();
 
-    calcAddressValues(testAddress);
-
+    delete [] cache;
     return 0;
 }
 
-void calcAddressValues(short address){
+unsigned short calcAddressValues(short address){
     unsigned short mask = 0x00F;
     unsigned short offset = mask & address;
     unsigned short slot = ((mask <<4) & address)>>4;
     unsigned short tag = ((mask <<8) & address)>>8;
+    return slot;
 
-    std::cout << "Offset: " <<std::hex<<std::uppercase <<offset<<std::endl;
-    std::cout << "Slot: " << slot <<std::endl;
-    std::cout << "Tag: " << tag <<std::endl;
+//    std::cout << "Offset: " <<std::hex<<std::uppercase <<offset<<std::endl;
+//    std::cout << "Slot: " << slot <<std::endl;
+//    std::cout << "Tag: " << tag <<std::endl;
 }
 
-
+void initializeCache(Word cache[]){
+    for (unsigned short i{0}; i<16; i++){
+        cache[i] = Word(i);
+    }
+}
 
 void populateMainMem(short *mainMem, short mainMemSize){
     short b{0};
@@ -65,3 +86,4 @@ void displayMainMem(short *mainMem, short mainMemSize){
         <<std::endl;
     }
 }
+
