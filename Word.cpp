@@ -11,6 +11,7 @@
 
 
 // --- Constructor ---
+Word::Word() {}
 
 // --- Calc Functions ---
 
