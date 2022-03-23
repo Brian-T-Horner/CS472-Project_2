@@ -8,10 +8,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2/Word.cpp" "C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2/cmake-build-debug/CMakeFiles/Project2.dir/Word.cpp.obj"
-  "C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2/main.cpp" "C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2/cmake-build-debug/CMakeFiles/Project2.dir/main.cpp.obj"
+  "/Users/brianhorner/Desktop/School/BU/C++/Project2/Word.cpp" "/Users/brianhorner/Desktop/School/BU/C++/Project2/cmake-build-debug/CMakeFiles/Project2.dir/Word.cpp.o"
+  "/Users/brianhorner/Desktop/School/BU/C++/Project2/main.cpp" "/Users/brianhorner/Desktop/School/BU/C++/Project2/cmake-build-debug/CMakeFiles/Project2.dir/main.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
+set(CMAKE_CXX_COMPILER_ID "AppleClang")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
