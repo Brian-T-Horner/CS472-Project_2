@@ -42,6 +42,7 @@ public:
     unsigned short getValidBit() const;
     unsigned short getDirtyBit() const;
     unsigned short getSlotNumber() const;
+    short*  getData() const;
 
 
     // --- Set Functions ---

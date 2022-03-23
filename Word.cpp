@@ -31,6 +31,7 @@ unsigned short Word::getSlotNumber() const {return this-> slot;}
 unsigned short Word::getTag() const {return this->tag;}
 unsigned short Word::getValidBit() const {return  this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
+short* Word::getData() const {return this->data;}
 
 
 // --- Set Functions ---

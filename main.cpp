@@ -8,6 +8,7 @@
 // 3/22/2022 - Added calcAddressValues func
 // 3/22/2022 - Changed cache to contain dynamic objects
 // 3/22/2022 - Added initialize cache function for setting tag and data
+// 3/22/2022 - Added todos for write and read for progress tomorrow
 
 // Standard Library Includes
 #include <iostream>
@@ -19,6 +20,8 @@ void populateMainMem(short *, short);
 void displayMainMem(short *, short);
 unsigned short calcAddressValues(short);
 void initializeCache(Word cache[]); //used for print test statements
+bool readCache(Word cache[], short);
+bool writeCache(Word cache[], short address, short data);
 
 // TODO: Decide if this is needed? could just rely on array index value
 
@@ -46,6 +49,102 @@ int main() {
     delete [] cache;
     return 0;
 }
+
+
+bool readCache(Word cache[], short address){
+    unsigned short mask = 0x00F;
+    unsigned short dataMask = 0x0FF;
+    unsigned short offset = mask & address;
+    unsigned short slot = ((mask <<4) & address)>>4;
+    unsigned short tag = ((mask <<8) & address)>>8;
+    unsigned short data = mask & address;
+    if(cache[slot].getValidBit() == 1){
+        if(cache[slot].getTag() == tag){
+            if (cache[slot].getDirtyBit() != 1){
+                for(unsigned int i{0}; i<16; i++){
+                    if(cache->getData()[i] == data){
+                        //TODO: Cache hit
+                    }else{
+                        // MISS
+                        //TODO: Load into cache
+                        //TODO: update data members
+                    }
+                }
+            }else{
+                //MISS
+                //TODO: write to main mem
+                //TODO: load into cache
+                //TODO: update data members
+            }
+        }else{
+            if(cache[slot].getDirtyBit()!= 1){
+                //MISS
+                //TODO: load into cache
+                //TODO: update data members
+            }else{
+                //MISS
+                //TODO: write back to main mem
+                //TODO: load into cache
+                //TODO: update data members
+            }
+        }
+    }else{
+        //MISS
+        //TODO: load into cache
+        //TODO: update data members
+    }
+}
+
+
+bool writeCache(Word cache[], short address, short data){
+    unsigned short mask = 0x00F;
+    unsigned short offset = mask & address;
+    unsigned short slot = ((mask <<4) & address)>>4;
+    unsigned short tag = ((mask <<8) & address)>>8;
+    if(cache[slot].getValidBit() == 1){
+        if(cache[slot].getTag() == tag){
+            if (cache[slot].getDirtyBit() != 1){
+                for(unsigned int i{0}; i<16; i++){
+                    if(cache->getData()[i] == data){
+                        //TODO: Cache hit
+                        //TODO: Write to cache
+                    }else{
+                        // MISS
+                        //TODO: Load into cache
+                        //TODO: update data members
+                        //TODO: write to cache
+                    }
+                }
+            }else{
+                //MISS
+                //TODO: write to main mem
+                //TODO: load into cache
+                //TODO: write to cache
+                //TODO: update data members
+            }
+        }else{
+            if(cache[slot].getDirtyBit()!= 1){
+                //MISS
+                //TODO: load into cache
+                //TODO: write to cache
+                //TODO: update data members
+            }else{
+                //MISS
+                //TODO: write back to main mem
+                //TODO: load into cache
+                //TODO: write to cache
+                //TODO: update data members
+            }
+        }
+    }else{
+        //MISS
+        //TODO: load into cache
+        //TODO: write to cache
+        //TODO: update data members
+    }
+}
+
+
 
 unsigned short calcAddressValues(short address){
     unsigned short mask = 0x00F;
