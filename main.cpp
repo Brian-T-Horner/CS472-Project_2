@@ -20,10 +20,12 @@ void populateMainMem(short *, short);
 void displayMainMem(short *, short);
 unsigned short calcAddressValues(short);
 void initializeCache(Word cache[]); //used for print test statements
-bool readCache(Word cache[], short);
-bool writeCache(Word cache[], short address, short data);
+void readCache(Word cache[], short);
+void writeCache(Word cache[], short address, short data);
+void displayCache(Word cache[]);
 
-// TODO: Decide if this is needed? could just rely on array index value
+// TODO: Add file read function, readCache, writeCache, displayCache, update
+//  word, and all writes needed to file
 
 int main() {
 
@@ -51,7 +53,7 @@ int main() {
 }
 
 
-bool readCache(Word cache[], short address){
+void readCache(Word cache[], short address){
     unsigned short mask = 0x00F;
     unsigned short dataMask = 0x0FF;
     unsigned short offset = mask & address;
@@ -96,7 +98,7 @@ bool readCache(Word cache[], short address){
 }
 
 
-bool writeCache(Word cache[], short address, short data){
+void writeCache(Word cache[], short address, short data){
     unsigned short mask = 0x00F;
     unsigned short offset = mask & address;
     unsigned short slot = ((mask <<4) & address)>>4;
@@ -144,7 +146,9 @@ bool writeCache(Word cache[], short address, short data){
     }
 }
 
-
+void displayCache(Word cache[]){
+    //TODO: implement display cache to file
+}
 
 unsigned short calcAddressValues(short address){
     unsigned short mask = 0x00F;
