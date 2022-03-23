@@ -3,7 +3,8 @@
 // Author: Brian Horner
 // Edit History:
 // 2/5/2022 - Initial Version and Establishing Git Repo
-// 3/19/2022 -
+// 3/22/2022 - Added populateMainMem and displayMainMem funcs
+// 3/22/2022 - Fixed populateMainMem func
 
 // Standard Library Includes
 #include <iostream>
@@ -23,6 +24,7 @@ int main() {
     return 0;
 }
 
+
 void populateMainMem(short *mainMem, short mainMemSize){
     short b{0};
     for (short i {0}; i<mainMemSize; i ++){
@@ -32,6 +34,7 @@ void populateMainMem(short *mainMem, short mainMemSize){
         }else{
             b = 0;
             mainMem[i] = b;
+            b++;
         }
     }
 }
