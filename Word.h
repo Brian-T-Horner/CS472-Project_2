@@ -22,7 +22,7 @@ public:
 
     // --- Calc Functions ---
     void loadData(short *, unsigned short);
-    void overwriteData(short *, unsigned short);
+//    void overwriteData(short *, unsigned short);
     void writeSingleData(unsigned short, short);
     void writeBackData(short *);
 
@@ -33,11 +33,7 @@ public:
     unsigned short getDirtyBit() const;
     unsigned short getSlotNumber() const;
     unsigned short getSingleData(unsigned short address) const;
-//
 
-
-    // --- Set Functions ---
-   // TODO: Might be needed for tests?
 
 
     // --- Print Function ---
@@ -51,7 +47,7 @@ private:
     unsigned short tag {0x0};
     unsigned short validBit{0x0};
     unsigned short dirtyBit{0x0};
-    short data[0x10];
+    short data[0x10]{0x00};
     unsigned short slot{0x0};
 };
 

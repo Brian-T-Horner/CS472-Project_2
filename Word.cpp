@@ -14,7 +14,7 @@
 
 
 // --- Constructor ---
-Word::Word() {}
+Word::Word() = default;
 
 Word::Word(unsigned short slotNumber) {
     for (unsigned int i{0}; i<0xF+0x1; i++){
@@ -40,24 +40,6 @@ void Word::loadData(short * mainMem, unsigned short address) {
     this->tag = ((addressMask<<8)&address)>>8;
 }
 
-//TODO: clean this up. checks for dirty bit and call write back before?
-//TODO: is there a need for two functions here????
-void Word::overwriteData(short * mainMem, unsigned short address) {
-    // Overwrite the data currently in the word with data from main mem
-    unsigned short blockMask = 0xFF0;
-    unsigned short blockBegin = address & blockMask;
-    unsigned short blockEnd = blockBegin + 0xF;
-    unsigned int dataIndex = 0;
-    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
-        this->data[dataIndex] = mainMem[i];
-        dataIndex++;
-    }
-    unsigned short addressMask = 0x00F;
-
-    this->dirtyBit = 0x1;
-    this->validBit = 0x1;
-    this->tag = ((addressMask<<8)&address)>>8;
-}
 
 void Word::writeBackData(short *mainMem){
     unsigned short writeBackStart = (this->tag<<8) + (this->slot<<4) + 0x0;
@@ -77,6 +59,24 @@ void Word::writeSingleData(unsigned short address, short data) {
 }
 
 
+//void Word::overwriteData(short * mainMem, unsigned short address) {
+//    // Overwrite the data currently in the word with data from main mem
+//    unsigned short blockMask = 0xFF0;
+//    unsigned short blockBegin = address & blockMask;
+//    unsigned short blockEnd = blockBegin + 0xF;
+//    unsigned int dataIndex = 0;
+//    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
+//        this->data[dataIndex] = mainMem[i];
+//        dataIndex++;
+//    }
+//    unsigned short addressMask = 0x00F;
+//
+//    this->dirtyBit = 0x1;
+//    this->validBit = 0x1;
+//    this->tag = ((addressMask<<8)&address)>>8;
+//}
+
+
 // --- Get Functions ---
 unsigned short Word::getSlotNumber() const {return this-> slot;}
 unsigned short Word::getTag() const {return this->tag;}
@@ -88,9 +88,6 @@ unsigned short Word::getSingleData(unsigned short address) const{
     return this->data[dataOffset];
 }
 
-
-
-// --- Set Functions ---
 
 
 

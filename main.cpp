@@ -10,15 +10,8 @@
 // 3/22/2022 - Added initialize cache function for setting tag and data
 // 3/22/2022 - Added todos for write and read for progress tomorrow
 // 3/23/2022 - Added printMainMem and displayCache functions
-// 3/24/2022 - Added basic run function adn read function
-
-
-//TODO: WriteByte function
-//TODO: ReadByte function
-//TODO: set tag
-//TODO: get slot
-//TODO: check data for reads to see if it hit
-
+// 3/24/2022 - Added basic run function and read function
+// 3/24/2022 - Added read and write functions
 
 
 // Standard Library Includes
@@ -34,13 +27,12 @@ void displayMainMem(short *, short);
 unsigned short calcAddressValues(short);
 void initializeCache(Word cache[]); //used for print test statements
 void printMainMemData(short *, unsigned short);
-void readCache(short *, Word cache[], short);
-//void writeCache(Word cache[], short address, short data);
+void readCache(short *, Word cache[], unsigned short);
+void writeCache(short *, Word cache[], short address, short data);
 void displayCache(Word cache[]);
 void run();
 
-// TODO: Add file read function, readCache, writeCache, update
-//  word, and all writes needed to file
+
 
 int main() {
 
@@ -48,21 +40,7 @@ int main() {
     Word *cache = new Word[16];
     initializeCache(cache);
     populateMainMem(main_mem, 2048);
-
-
-    unsigned short testAddress{0x14A};
-    unsigned short slot = (0x0F0 & testAddress)>>4;
-    cache[slot].loadData(main_mem, testAddress);
-    displayCache(cache);
-    cache[slot].writeSingleData(0x14D, 0xCD);
-    displayCache(cache);
-    cache[slot].writeBackData(main_mem);
-    displayCache(cache);
-    cache[slot].overwriteData(main_mem, 0x24C);
-    displayCache(cache);
-
-
-
+    run();
     delete [] cache;
     return 0;
 }
@@ -81,6 +59,12 @@ void run(){
         switch (inputChar){
             case 'R':
                 std::cout << "What address would you like to read?" <<std::endl;
+                unsigned short input;
+                std::cin >> input;
+                if(!std::cin.eof() && std::cin.good()){
+                    readCache(main_mem, cache, input);
+                }
+                break;
             case 'W':
                 std::cout << "What address would you like to write to?"
                 <<std::endl;
@@ -100,17 +84,9 @@ void displayCache(Word cache[]){
     std::cout<<std::endl;
 }
 
-void printMainMemData(short *mainMem, unsigned short address){
-    unsigned short blockMask = 0xFF0;
-    unsigned short blockBegin = address & blockMask;
-    unsigned short blockEnd = blockBegin + 0xF;
-    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
-        std::cout << "Data at memory location " <<std::hex<<std::uppercase<<i << " is " << mainMem[i]<<std::endl;
-    }
-}
 
 
-void readCache(short *mainMem, Word cache[], short address){
+void readCache(short *mainMem, Word cache[], unsigned short address){
     unsigned short mask = 0xF;
     unsigned short offset = address & mask;
     unsigned short slot = address & (mask<<4);
@@ -121,60 +97,62 @@ void readCache(short *mainMem, Word cache[], short address){
         std::cout << "At that byte there is the value ";
         std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
         <<std::endl;
+    }else if (cache[slot].getValidBit() == 1){
+        if(cache[slot].getTag() != tag){
+            if(cache[slot].getDirtyBit() == 0){
+                cache[slot].loadData(mainMem,address);
+                std::cout << "At that byte there is the value ";
+                std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
+                <<std::endl;
+            } else if (cache[slot].getDirtyBit() == 1){
+                cache[slot].writeBackData(mainMem);
+                cache[slot].loadData(mainMem,address);
+                std::cout << "At that byte there is the value ";
+                std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
+                <<std::endl;
+            }
+        } else if (cache[slot].getTag() == tag){
+            std::cout << "At that byte there is the value ";
+            std::cout << cache[slot].getSingleData(address)<< " (Cache Hit)"
+            <<std::endl;
+        }
     }
-
-        // miss grab from main
-    // else if valid == 1
-       // if tag & slot != ==
-            // if dirty == 0
-                // miss grab from main
-            // else if dirty == 1
-                // write back
-                // grab from main
-        // if tag and slot ==
-            // hit read from cache
-
 }
 
 
-void writeCache(Word cache[], short address, short data){
-    unsigned short standardMask = 0xF;
+void writeCache(short *mainMem, Word cache[], short address, short data){
+    unsigned short mask = 0xF;
+    unsigned short offset = address & mask;
+    unsigned short slot = address & (mask<<4);
+    unsigned short tag = address & (mask<<8);
 
-    // if valid  == 0
-        //get data
-        // overwrite slot
-        // update dirty bit, tag
-    // else if valid == 1
-        // if tag & slot != ==
-            // if dirty == 0
-                // get data
-                // overwrite slot
-                // update dirty bit,tag
-            // else if dirty == 1
-                // write back data
-                // grab data
-                // overwrite slot
-                // update dirty bit & tag
-        // if tag & slot ==
-            // if dirty bit == 1
-                // write back data
-                // grab data again?
-                // overwrite slot
-                //update dirty bit & tag
-            // if dirty bit == 0
-                // overwrite data
-                // update dirty bit and tag
+    if(cache[slot].getValidBit() == 0){
+        cache[slot].loadData(mainMem, address);
+        cache[slot].writeSingleData(address, data);
+    } else if (cache[slot].getValidBit() == 1){
+        if (cache[slot].getTag() != tag){
+            if (cache[slot].getDirtyBit() == 0){
+                cache[slot].loadData(mainMem, address);
+                cache[slot].writeSingleData(address, data);
+            } else if (cache[slot].getDirtyBit() == 1){
+                cache[slot].writeBackData(mainMem);
+                cache[slot].loadData(mainMem, address);
+                cache[slot].writeSingleData(address, data);
+            }
+        } else if (cache[slot].getTag() == tag){
+            if (cache[slot].getDirtyBit() == 1){
+                cache[slot].writeBackData(mainMem);
+                cache[slot].writeSingleData(address, data);
+            }else if (cache[slot].getDirtyBit() == 0){
+                cache[slot].writeSingleData(address, data);
+            }
+        }
+    }
 }
 
 
 
-unsigned short calcAddressValues(short address){
-    unsigned short mask = 0x00F;
-    unsigned short offset = mask & address;
-    unsigned short slot = ((mask <<4) & address)>>4;
-    unsigned short tag = ((mask <<8) & address)>>8;
-    return slot;
-}
+
 
 void initializeCache(Word cache[]){
     for (unsigned short i{0}; i<0xF+1; i++){
@@ -194,6 +172,27 @@ void populateMainMem(short *mainMem, short mainMemSize){
             b++;
         }
     }
+}
+
+
+
+// --- CURRENTLY UNUSED FUNCTIONS ---
+
+void printMainMemData(short *mainMem, unsigned short address){
+    unsigned short blockMask = 0xFF0;
+    unsigned short blockBegin = address & blockMask;
+    unsigned short blockEnd = blockBegin + 0xF;
+    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
+        std::cout << "Data at memory location " <<std::hex<<std::uppercase<<i << " is " << mainMem[i]<<std::endl;
+    }
+}
+
+unsigned short calcAddressValues(short address){
+    unsigned short mask = 0x00F;
+    unsigned short offset = mask & address;
+    unsigned short slot = ((mask <<4) & address)>>4;
+    unsigned short tag = ((mask <<8) & address)>>8;
+    return slot;
 }
 
 void displayMainMem(short *mainMem, short mainMemSize){
