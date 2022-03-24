@@ -27,8 +27,10 @@ Word::Word(unsigned short slotNumber) {
 
 void Word::loadData(short * mainMem, unsigned short address) {
     // Overwrite the data currently in the word with data from main mem
-    unsigned short blockMask = 0xFF0;
-    unsigned short blockBegin = address & blockMask;
+    unsigned short blockMask = 0b111111110000;
+    //TODO: FIX ERROR WITH BLOCK BEGIN HERE
+    unsigned short blockBegin = address & (blockMask);
+    std::cout << "Block begin: " <<std::hex <<blockBegin <<std::endl;
     unsigned short blockEnd = blockBegin + 0xF;
     unsigned int dataIndex = 0;
     //    // Overwrite the data currently in the word with data from main mem
@@ -40,8 +42,9 @@ void Word::loadData(short * mainMem, unsigned short address) {
     //        this->data[dataIndex] = mainMem[i];
     //        dataIndex++;
     //    }
-    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
+    for(unsigned short i = blockBegin; i< blockEnd+0x1; i++){
         this->data[dataIndex] = mainMem[i];
+        std::cout << mainMem[i] <<std::endl;
         dataIndex++;
     }
     unsigned short addressMask = 0x00F;
