@@ -40,6 +40,7 @@ int main() {
     Word *cache = new Word[16];
     initializeCache(cache);
     populateMainMem(main_mem, 2048);
+    displayMainMem(main_mem, 2048);
     run();
     delete [] cache;
     return 0;
@@ -59,17 +60,28 @@ void run(){
         switch (inputChar){
             case 'R':
                 std::cout << "What address would you like to read?" <<std::endl;
-                unsigned short input;
-                std::cin >> input;
+                unsigned short readInput;
+                std::cin >> readInput;
                 if(!std::cin.eof() && std::cin.good()){
-                    readCache(main_mem, cache, input);
+                    readCache(main_mem, cache, readInput);
                 }
                 break;
             case 'W':
                 std::cout << "What address would you like to write to?"
                 <<std::endl;
+                unsigned short writeInput;
+                std::cin >> writeInput;
+                if(!std::cin.eof() && std::cin.good()){
+                    std::cout << "What data would you like to write at that "
+                              "address?" <<std::endl;
+                    short writeData;
+                    std::cin >> writeData;
+                    if(!std::cin.eof() && std::cin.good()){
+                        writeCache(main_mem, cache, writeInput, writeData);
+                    }
+                }
             case 'D':
-                std::cout<< "Display" <<std::endl;
+                displayCache(cache);
             default:
                 invalidInput = true;
 
@@ -94,26 +106,34 @@ void readCache(short *mainMem, Word cache[], unsigned short address){
 
     if(cache[slot].getValidBit() == 0){
         cache[slot].loadData(mainMem,address);
+        displayCache(cache);
+        cache[slot].printData();
         std::cout << "At that byte there is the value ";
-        std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
+        std::cout << std::hex <<std::uppercase<<cache[slot].getSingleData
+        (address)<<
+        " (Cache Miss)"
         <<std::endl;
     }else if (cache[slot].getValidBit() == 1){
         if(cache[slot].getTag() != tag){
             if(cache[slot].getDirtyBit() == 0){
                 cache[slot].loadData(mainMem,address);
                 std::cout << "At that byte there is the value ";
-                std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
+                std::cout << std::hex <<std::uppercase<< cache[slot]
+                .getSingleData(offset)<< " (Cache "
+                                                                   "Miss)"
                 <<std::endl;
             } else if (cache[slot].getDirtyBit() == 1){
                 cache[slot].writeBackData(mainMem);
                 cache[slot].loadData(mainMem,address);
                 std::cout << "At that byte there is the value ";
-                std::cout << cache[slot].getSingleData(address)<< " (Cache Miss)"
+                std::cout << std::hex <<std::uppercase<< cache[slot]
+                .getSingleData(address)<< " (Cache Miss)"
                 <<std::endl;
             }
         } else if (cache[slot].getTag() == tag){
             std::cout << "At that byte there is the value ";
-            std::cout << cache[slot].getSingleData(address)<< " (Cache Hit)"
+            std::cout << std::hex <<std::uppercase<< cache[slot]
+            .getSingleData(address)<< " (Cache Hit)"
             <<std::endl;
         }
     }

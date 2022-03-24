@@ -32,7 +32,7 @@ public:
     unsigned short getValidBit() const;
     unsigned short getDirtyBit() const;
     unsigned short getSlotNumber() const;
-    unsigned short getSingleData(unsigned short address) const;
+    unsigned short getSingleData(unsigned short) const;
 
 
 

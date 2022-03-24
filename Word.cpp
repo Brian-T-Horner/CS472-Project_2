@@ -83,9 +83,8 @@ unsigned short Word::getTag() const {return this->tag;}
 unsigned short Word::getValidBit() const {return  this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
 
-unsigned short Word::getSingleData(unsigned short address) const{
-    unsigned short dataOffset = 0x00F & address;
-    return this->data[dataOffset];
+unsigned short Word::getSingleData(unsigned short offset) const{
+    return this->data[offset];
 }
 
 
