@@ -31,6 +31,15 @@ void Word::loadData(short * mainMem, unsigned short address) {
     unsigned short blockBegin = address & blockMask;
     unsigned short blockEnd = blockBegin + 0xF;
     unsigned int dataIndex = 0;
+    //    // Overwrite the data currently in the word with data from main mem
+    //    unsigned short blockMask = 0xFF0;
+    //    unsigned short blockBegin = address & blockMask;
+    //    unsigned short blockEnd = blockBegin + 0xF;
+    //    unsigned int dataIndex = 0;
+    //    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
+    //        this->data[dataIndex] = mainMem[i];
+    //        dataIndex++;
+    //    }
     for(unsigned short i = blockBegin; i< blockEnd+1; i++){
         this->data[dataIndex] = mainMem[i];
         dataIndex++;
@@ -60,15 +69,7 @@ void Word::writeSingleData(unsigned short address, short data) {
 
 
 //void Word::overwriteData(short * mainMem, unsigned short address) {
-//    // Overwrite the data currently in the word with data from main mem
-//    unsigned short blockMask = 0xFF0;
-//    unsigned short blockBegin = address & blockMask;
-//    unsigned short blockEnd = blockBegin + 0xF;
-//    unsigned int dataIndex = 0;
-//    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
-//        this->data[dataIndex] = mainMem[i];
-//        dataIndex++;
-//    }
+
 //    unsigned short addressMask = 0x00F;
 //
 //    this->dirtyBit = 0x1;
@@ -83,8 +84,11 @@ unsigned short Word::getTag() const {return this->tag;}
 unsigned short Word::getValidBit() const {return  this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
 
-unsigned short Word::getSingleData(unsigned short offset) const{
-    return this->data[offset];
+unsigned short Word::getSingleData(unsigned short address) const{
+    unsigned short mask = 0x00F;
+    unsigned short offset = address & mask;
+    unsigned int returnValue = this->data[offset];
+    return returnValue;
 }
 
 

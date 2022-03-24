@@ -40,7 +40,6 @@ int main() {
     Word *cache = new Word[16];
     initializeCache(cache);
     populateMainMem(main_mem, 2048);
-    displayMainMem(main_mem, 2048);
     run();
     delete [] cache;
     return 0;
@@ -99,15 +98,13 @@ void displayCache(Word cache[]){
 
 
 void readCache(short *mainMem, Word cache[], unsigned short address){
-    unsigned short mask = 0xF;
+    unsigned short mask = 0x00F;
     unsigned short offset = address & mask;
-    unsigned short slot = address & (mask<<4);
-    unsigned short tag = address & (mask<<8);
+    unsigned short slot = (address & (mask<<4));
+    unsigned short tag = (address & (mask<<8));
 
     if(cache[slot].getValidBit() == 0){
         cache[slot].loadData(mainMem,address);
-        displayCache(cache);
-        cache[slot].printData();
         std::cout << "At that byte there is the value ";
         std::cout << std::hex <<std::uppercase<<cache[slot].getSingleData
         (address)<<
@@ -141,10 +138,10 @@ void readCache(short *mainMem, Word cache[], unsigned short address){
 
 
 void writeCache(short *mainMem, Word cache[], short address, short data){
-    unsigned short mask = 0xF;
+    unsigned short mask = 0x00F;
     unsigned short offset = address & mask;
-    unsigned short slot = address & (mask<<4);
-    unsigned short tag = address & (mask<<8);
+    unsigned short slot = (address & (mask<<4));
+    unsigned short tag = (address & (mask<<8));
 
     if(cache[slot].getValidBit() == 0){
         cache[slot].loadData(mainMem, address);
