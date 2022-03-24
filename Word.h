@@ -20,9 +20,9 @@ public:
     Word(unsigned short slotNumber);
 
     // --- Calc Functions ---
-
+    void loadData(short *, unsigned short);
     void overwriteData(short *, unsigned short);
-    bool checkData(unsigned short);
+    bool checkData(unsigned short, short);
     void writeSingleData(unsigned short, short);
     void writeBackData(short *);
 
@@ -32,7 +32,7 @@ public:
     unsigned short getValidBit() const;
     unsigned short getDirtyBit() const;
     unsigned short getSlotNumber() const;
-//    short*  getData() const;
+//
 
 
     // --- Set Functions ---

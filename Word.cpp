@@ -23,7 +23,9 @@ Word::Word(unsigned short slotNumber) {
 }
 
 // --- Calc Functions ---
-void Word::overwriteData(short * mainMem, unsigned short address) {
+
+void Word::loadData(short * mainMem, unsigned short address) {
+    // Overwrite the data currently in the word with data from main mem
     unsigned short blockMask = 0xFF0;
     unsigned short blockBegin = address & blockMask;
     unsigned short blockEnd = blockBegin + 0xF;
@@ -32,7 +34,28 @@ void Word::overwriteData(short * mainMem, unsigned short address) {
         this->data[dataIndex] = mainMem[i];
         dataIndex++;
     }
-    this->dirtyBit = 1;
+    unsigned short addressMask = 0x00F;
+    this->validBit = 0x1;
+    this->tag = ((addressMask<<8)&address)>>8;
+}
+
+//TODO: clean this up. checks for dirty bit and call write back before?
+//TODO: is there a need for two functions here????
+void Word::overwriteData(short * mainMem, unsigned short address) {
+    // Overwrite the data currently in the word with data from main mem
+    unsigned short blockMask = 0xFF0;
+    unsigned short blockBegin = address & blockMask;
+    unsigned short blockEnd = blockBegin + 0xF;
+    unsigned int dataIndex = 0;
+    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
+        this->data[dataIndex] = mainMem[i];
+        dataIndex++;
+    }
+    unsigned short addressMask = 0x00F;
+
+    this->dirtyBit = 0x1;
+    this->validBit = 0x1;
+    this->tag = ((addressMask<<8)&address)>>8;
 }
 
 void Word::writeBackData(short *mainMem){
@@ -43,11 +66,13 @@ void Word::writeBackData(short *mainMem){
         mainMem[i] = this->data[dataIndex];
         dataIndex++;
     }
+    this->dirtyBit = 0x0;
 }
 
 void Word::writeSingleData(unsigned short address, short data) {
     unsigned short dataOffset = 0x00F & address;
     this->data[dataOffset] = data;
+    this->dirtyBit = 1;
 }
 
 
@@ -84,7 +109,4 @@ void Word::displayWord() const{
 };
 
 // --- Destructor ---
-Word::~Word() {
-
-}
-// --- Data Members ---
+Word::~Word() {}

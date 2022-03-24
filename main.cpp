@@ -12,12 +12,12 @@
 // 3/23/2022 - Added printMainMem and displayCache functions
 
 
-//TODO: Write function
-//TODO: Read function
+//TODO: WriteByte function
+//TODO: ReadByte function
 //TODO: set tag
 //TODO: get slot
-//TODO: check data
-//TODO:
+//TODO: check data for reads to see if it hit
+
 
 
 // Standard Library Includes
@@ -35,7 +35,7 @@ void printMainMemData(short *, unsigned short);
 //void writeCache(Word cache[], short address, short data);
 void displayCache(Word cache[]);
 
-// TODO: Add file read function, readCache, writeCache, displayCache, update
+// TODO: Add file read function, readCache, writeCache, update
 //  word, and all writes needed to file
 
 int main() {
@@ -43,37 +43,21 @@ int main() {
     short main_mem[2048];
     Word *cache = new Word[16];
     initializeCache(cache);
-    displayCache(cache);
-
     populateMainMem(main_mem, 2048);
-    displayMainMem(main_mem, 2048);
-//
-//    std::cout << "Cache slot F has " <<std::hex<<std::uppercase <<cache[0xF]
-//    .getSlotNumber() << " slot number."<<std::endl;
-//
-//
-//
+
+
     unsigned short testAddress{0x14A};
     unsigned short slot = (0x0F0 & testAddress)>>4;
-////    std::cout << "Slot is " <<std::hex<<std::uppercase <<slot<<std::endl;
-//    std::cout << "Slot number is "<< cache[slot].getSlotNumber() <<std::endl;
-    cache[slot].overwriteData(main_mem, testAddress);
-    cache[slot].printData();
+    cache[slot].loadData(main_mem, testAddress);
+    displayCache(cache);
+    cache[slot].writeSingleData(0x14D, 0xCD);
+    displayCache(cache);
     cache[slot].writeBackData(main_mem);
+    displayCache(cache);
+    cache[slot].overwriteData(main_mem, 0x24C);
     displayCache(cache);
 
 
-
-//    printMainMemData(main_mem, testAddress);
-
-
-//
-//    std::cout << "Test dirty bit: " <<
-//    std::hex<<std::uppercase<<cache[calcAddressValues
-//    (testAddress)]
-//    .getDirtyBit();
-//
-//    cache[calcAddressValues(testAddress)].printData();
 
     delete [] cache;
     return 0;
@@ -85,6 +69,7 @@ void displayCache(Word cache[]){
     for (unsigned int i{0}; i<0xF+1; i++){
         cache[i].displayWord();
     }
+    std::cout<<std::endl;
 }
 
 void printMainMemData(short *mainMem, unsigned short address){
