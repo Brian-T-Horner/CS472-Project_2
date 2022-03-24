@@ -60,7 +60,7 @@ void run(){
             case 'R':
                 std::cout << "What address would you like to read?" <<std::endl;
                 unsigned short readInput;
-                std::cin >> readInput;
+                std::cin >>std::hex>> readInput;
                 if(!std::cin.eof() && std::cin.good()){
                     readCache(main_mem, cache, readInput);
                 }
@@ -74,7 +74,7 @@ void run(){
                     std::cout << "What data would you like to write at that "
                               "address?" <<std::endl;
                     short writeData;
-                    std::cin >> writeData;
+                    std::cin >>std::hex>> writeData;
                     if(!std::cin.eof() && std::cin.good()){
                         writeCache(main_mem, cache, writeInput, writeData);
                     }
