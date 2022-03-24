@@ -5,6 +5,7 @@
 // 3/19/2022 - Initial Version
 // 3/22/2022 - Added default constructor and get functions
 // 3/23/2022 - Added overwriteData, displayWord, writeBackData and writeSingleData
+// 3/24/2022 - Added getSingleData function
 
 // Standard Library Includes
 #include <iostream>
@@ -76,12 +77,16 @@ void Word::writeSingleData(unsigned short address, short data) {
 }
 
 
-
 // --- Get Functions ---
 unsigned short Word::getSlotNumber() const {return this-> slot;}
 unsigned short Word::getTag() const {return this->tag;}
 unsigned short Word::getValidBit() const {return  this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
+
+unsigned short Word::getSingleData(unsigned short address) const{
+    unsigned short dataOffset = 0x00F & address;
+    return this->data[dataOffset];
+}
 
 
 

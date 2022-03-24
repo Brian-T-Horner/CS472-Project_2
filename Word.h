@@ -6,6 +6,7 @@
 // 3/19/2022 - Added methods and data member specifications
 // 3/22/2022 - Added default constructor, get functions
 // 3/23/2022 - Added overwriteData, displayWord, writeBackData and writeSingleData
+// 3/24/2022 - Added getSingleData function
 
 
 #ifndef PROJECT2_WORD_H
@@ -22,7 +23,6 @@ public:
     // --- Calc Functions ---
     void loadData(short *, unsigned short);
     void overwriteData(short *, unsigned short);
-    bool checkData(unsigned short, short);
     void writeSingleData(unsigned short, short);
     void writeBackData(short *);
 
@@ -32,6 +32,7 @@ public:
     unsigned short getValidBit() const;
     unsigned short getDirtyBit() const;
     unsigned short getSlotNumber() const;
+    unsigned short getSingleData(unsigned short address) const;
 //
 
 
