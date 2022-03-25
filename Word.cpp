@@ -9,6 +9,7 @@
 
 // Standard Library Includes
 #include <iostream>
+#include <iomanip>
 // User Built Includes
 #include "Word.h"
 
@@ -17,8 +18,8 @@
 Word::Word() = default;
 
 Word::Word(unsigned short slotNumber) {
-    for (unsigned int i{0}; i<0xF+0x1; i++){
-        data[i] = 0;
+    for (unsigned int i{0}; i<16; i++){
+        data[i] = 0x00;
     }
     this->slot = slotNumber;
 }
@@ -28,23 +29,11 @@ Word::Word(unsigned short slotNumber) {
 void Word::loadData(short * mainMem, unsigned short address) {
     // Overwrite the data currently in the word with data from main mem
     unsigned short blockMask = 0b111111110000;
-    //TODO: FIX ERROR WITH BLOCK BEGIN HERE
     unsigned short blockBegin = address & (blockMask);
-    std::cout << "Block begin: " <<std::hex <<blockBegin <<std::endl;
     unsigned short blockEnd = blockBegin + 0xF;
     unsigned int dataIndex = 0;
-    //    // Overwrite the data currently in the word with data from main mem
-    //    unsigned short blockMask = 0xFF0;
-    //    unsigned short blockBegin = address & blockMask;
-    //    unsigned short blockEnd = blockBegin + 0xF;
-    //    unsigned int dataIndex = 0;
-    //    for(unsigned short i = blockBegin; i< blockEnd+1; i++){
-    //        this->data[dataIndex] = mainMem[i];
-    //        dataIndex++;
-    //    }
     for(unsigned short i = blockBegin; i< blockEnd+0x1; i++){
         this->data[dataIndex] = mainMem[i];
-        std::cout << mainMem[i] <<std::endl;
         dataIndex++;
     }
     unsigned short addressMask = 0x00F;
@@ -71,20 +60,11 @@ void Word::writeSingleData(unsigned short address, short data) {
 }
 
 
-//void Word::overwriteData(short * mainMem, unsigned short address) {
-
-//    unsigned short addressMask = 0x00F;
-//
-//    this->dirtyBit = 0x1;
-//    this->validBit = 0x1;
-//    this->tag = ((addressMask<<8)&address)>>8;
-//}
-
 
 // --- Get Functions ---
 unsigned short Word::getSlotNumber() const {return this-> slot;}
 unsigned short Word::getTag() const {return this->tag;}
-unsigned short Word::getValidBit() const {return  this-> validBit;}
+unsigned short Word::getValidBit() const {return this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
 
 unsigned short Word::getSingleData(unsigned short address) const{
@@ -107,11 +87,11 @@ void Word::printData() const{
 }
 
 void Word::displayWord() const{
-    std::cout << std::hex<<std::uppercase << this->slot << "\t\t";
-    std::cout << this->validBit << "\t\t" <<this->dirtyBit <<"\t\t";
+    std::cout << std::hex<<std::uppercase << this->slot << "\t";
+    std::cout << this->validBit << "\t" <<this->dirtyBit <<"\t";
     std::cout << this->tag <<"\t\t";
     for(unsigned int i{0}; i<0xF+0x1; i++){
-        std::cout << this->data[i] << "\t";
+        std::cout << this->data[i] << "    ";
     }
     std::cout<<std::endl;
 };

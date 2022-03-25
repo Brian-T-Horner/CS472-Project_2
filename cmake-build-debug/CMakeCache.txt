@@ -253,12 +253,6 @@ Project2_BINARY_DIR:STATIC=C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects
 //Value Computed by CMake
 Project2_SOURCE_DIR:STATIC=C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2
 
-//Value Computed by CMake
-Project_BINARY_DIR:STATIC=C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2/cmake-build-debug
-
-//Value Computed by CMake
-Project_SOURCE_DIR:STATIC=C:/Users/bhorn/Desktop/Programming Stuff/C++ Projects/CS472/Project2
-
 
 ########################
 # INTERNAL cache entries
