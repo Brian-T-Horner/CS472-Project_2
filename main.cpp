@@ -12,6 +12,12 @@
 // 3/23/2022 - Added printMainMem and displayCache functions
 // 3/24/2022 - Added basic run function and read function
 // 3/24/2022 - Added read and write functions
+// 3/24/2022 - Added comments
+// 3/24/2022 - Added command, data, and address vectors
+// 3/24/2022 - Added loop to read through command, data and address vectors
+// and preform functions
+
+
 
 
 // Standard Library Includes
@@ -29,13 +35,29 @@ unsigned short calcAddressValues(short);
 void initializeCache(std::vector<Word> &); //used for print test statements
 void printMainMemData(short *, unsigned short);
 void readCache(short *, std::vector<Word>&, unsigned short);
-void writeCache(short *, std::vector<Word> &, short address, short data);
+void writeCache(short *, std::vector<Word> &, unsigned short address, short
+data);
 void displayCache(std::vector<Word> &);
-void run(short *, std::vector<Word> &);
+void run(short *, std::vector<Word> &, std::vector<char> &,
+        std::vector<unsigned short> &, std::vector<short> &);
 
 
 
 int main() {
+
+    // Command, address and data vectors
+    std::vector<char> commands = {'R',  'R',  'R',  'R',
+                                       'R',  'R',  'R', 'R',
+                                       'R',  'R', 'R',  'D',
+                                       'W', 'W', 'R',  'D',
+                                      'R',  'R',  'D', 'R',
+                                      'R',  'R',  'R', 'D'};
+    std::vector<unsigned short> addressInputs = {0x5, 0x6, 0x7, 0x14c,
+                                                 0x14d,0x14e, 0x14f, 0x150,
+                                                 0x151, 0x3A6, 0x4C3, 0x14C,
+                                                 0x63B,  0x582, 0x348, 0x3F,
+                                                 0x14b, 0x14c, 0x63F,0x83,};
+    std::vector<short> dataInputs = {0x99, 0x7};
 
 
     short main_mem[2048]; // set up main mem
@@ -43,54 +65,67 @@ int main() {
 
     std::vector<Word> cache; // set up cache
     initializeCache(cache);
-
-    run(main_mem, cache); // run standard reads
+    std::string file = "test.txt";
+    run(main_mem, cache, commands, addressInputs, dataInputs); // run standard reads
     return 0;
 }
 
-void run(short * main_mem, std::vector<Word> &cache){
+void run(short * main_mem, std::vector<Word> &cache, std::vector<char>
+& commands, std::vector<unsigned short> & addressInput, std::vector<short>
+        & dataInput){
     char inputChar;
-    bool invalidInput = false;
-    //TODO: File reading
-    std::cout << "(R)ead, (W)rite, or (D)isplay Cache?" <<std::endl;
-    while(!invalidInput){
-        std::cin >> inputChar;
+    int commandsIndex{0};
+    int addressIndex{0};
+    int dataIndex{0};
+    while(commandsIndex < commands.size()){
+        std::cout << "(R)ead, (W)rite, or (D)isplay Cache?" <<std::endl;
+        inputChar = commands[commandsIndex];
+        std::cout <<inputChar <<std::endl;
+        commandsIndex ++;
+
         // Switch statements for read, write and display cache
         switch (inputChar){
             case 'R':
+            {
                 std::cout << "What address would you like to read?" <<std::endl;
-                unsigned short readInput;
-                std::cin >>std::hex>> readInput;
-                if(!std::cin.eof() && std::cin.good()){
-                    readCache(main_mem, cache, readInput);
-                }
+                unsigned short readInput = addressInput[addressIndex];
+                addressIndex++;
+                std::cout << readInput <<std::endl;
+
+                readCache(main_mem, cache, readInput);
+
+
                 break;
-            case 'W':
+            }
+            case 'W': {
                 std::cout << "What address would you like to write to?"
                 <<std::endl;
-                unsigned short writeInput;
-                std::cin >>std::hex>> writeInput;
+                unsigned short writeInput = addressInput[addressIndex];
+                addressIndex++;
+                std::cout << writeInput <<std::endl;
+                std::cout << "What data would you like to write at that "
+                             "address?" <<std::endl;
+                short writeData = dataInput[dataIndex];
+                dataIndex++;
+                std::cout <<writeData <<std::endl;
 
-                if(!std::cin.eof() && std::cin.good()){
-                    std::cout << "What data would you like to write at that "
-                              "address?" <<std::endl;
-                    short writeData;
-                    std::cin >>std::hex>> writeData;
-                    if(!std::cin.eof() && std::cin.good()){
-                        writeCache(main_mem, cache, writeInput, writeData);
-                    }
+                writeCache(main_mem, cache, writeInput, writeData);
+                break;
                 }
-                break;
-            case 'D':
+            case 'D': {
                 displayCache(cache);
-                std::cout << "In display cache" <<std::endl;
+                std::cout << "\n"<<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
+                <<std::endl;
                 break;
-            default:
-                invalidInput = true;
-
+            }
+            default: {
+                std::cout << "Error: Should not reach here." <<std::endl;
+            }
         }
     }
 }
+
 
 void displayCache(std::vector<Word> &cache){
     // Function to display cache
@@ -118,7 +153,9 @@ void readCache(short *mainMem, std::vector<Word> &cache, unsigned short
         cache[slot].loadData(mainMem,address);
         std::cout << "At that byte there is the value ";
         std::cout << std::hex <<std::uppercase<<cache[slot].getSingleData
-        (address)<<" (Cache Miss)"<<std::endl;
+        (address)<<" (Cache Miss)\n"<<std::endl;
+        std::cout << "\n---------------------------------------------------\n"
+        <<std::endl;
     }else if (cache[slot].getValidBit() == 1){
         // If cache slot has been used
         if(cache[slot].getTag() != tag){
@@ -128,27 +165,34 @@ void readCache(short *mainMem, std::vector<Word> &cache, unsigned short
                 cache[slot].loadData(mainMem,address);
                 std::cout << "At that byte there is the value ";
                 std::cout << std::hex <<std::uppercase<< cache[slot]
-                .getSingleData(offset)<< " (Cache Miss)" <<std::endl;
+                .getSingleData(offset)<< " (Cache Miss)\n" <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
+                <<std::endl;
             } else if (cache[slot].getDirtyBit() == 1){
                 // If cache slot is used, different tag and dirty
                 cache[slot].writeBackData(mainMem);
                 cache[slot].loadData(mainMem,address);
                 std::cout << "At that byte there is the value ";
                 std::cout << std::hex <<std::uppercase<< cache[slot]
-                .getSingleData(address)<< " (Cache Miss)" <<std::endl;
+                .getSingleData(address)<< " (Cache Miss)\n" <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
+                <<std::endl;
             }
         } else if (cache[slot].getTag() == tag){
             // If cache tag is the same
             std::cout << "At that byte there is the value ";
             std::cout << std::hex <<std::uppercase<< cache[slot]
-            .getSingleData(address)<< " (Cache Hit)"
+            .getSingleData(address)<< " (Cache Hit)\n"
+            <<std::endl;
+            std::cout << "\n---------------------------------------------------\n"
             <<std::endl;
         }
     }
 }
 
 
-void writeCache(short *mainMem, std::vector<Word> &cache, short address,
+void writeCache(short *mainMem, std::vector<Word> &cache, unsigned short
+address,
  short data){
     // Function to write to cache
 
@@ -162,7 +206,10 @@ void writeCache(short *mainMem, std::vector<Word> &cache, short address,
         cache[slot].loadData(mainMem, address);
         cache[slot].writeSingleData(address, data);
         std::cout << "Value " <<cache[slot].getSingleData(address)
-        <<" has been written to address " <<address <<".(Cache Miss)" <<std::endl;
+        <<" has been written to address " <<address <<".(Cache Miss)\n"
+        <<std::endl;
+        std::cout << "\n---------------------------------------------------\n"
+        <<std::endl;
     } else if (cache[slot].getValidBit() == 1){
         // If cache slot has been used
         if (cache[slot].getTag() != tag){
@@ -172,14 +219,20 @@ void writeCache(short *mainMem, std::vector<Word> &cache, short address,
                 cache[slot].loadData(mainMem, address);
                 cache[slot].writeSingleData(address, data);
                 std::cout << "Value " <<cache[slot].getSingleData(address)
-                <<" has been written to address " <<address <<".(Cache Miss)" <<std::endl;
+                <<" has been written to address " <<address <<".(Cache Miss)"
+                "\n" <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
+                <<std::endl;
             } else if (cache[slot].getDirtyBit() == 1){
                 // If cache slot with different tag hand dirty
                 cache[slot].writeBackData(mainMem);
                 cache[slot].loadData(mainMem, address);
                 cache[slot].writeSingleData(address, data);
                 std::cout << "Value " <<cache[slot].getSingleData(address)
-                <<" has been written to address " <<address <<".(Cache Miss)" <<std::endl;
+                <<" has been written to address " <<address <<".(Cache Miss)"
+                                                              "\n" <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
+                <<std::endl;
             }
         } else if (cache[slot].getTag() == tag){
             // If cache slot tag has the same tag
@@ -188,13 +241,17 @@ void writeCache(short *mainMem, std::vector<Word> &cache, short address,
                 cache[slot].writeBackData(mainMem);
                 cache[slot].writeSingleData(address, data);
                 std::cout << "Value " <<cache[slot].getSingleData(address)
-                <<" has been written to address " <<address <<".(Cache Hit)"
+                <<" has been written to address " <<address <<".(Cache Hit)\n"
+                <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
                 <<std::endl;
             }else if (cache[slot].getDirtyBit() == 0){
                 // If cache slot with same tag and not dirty
                 cache[slot].writeSingleData(address, data);
                 std::cout << "Value " <<cache[slot].getSingleData(address)
-                <<" has been written to address " <<address <<".(Cache Hit)"
+                <<" has been written to address " <<address <<".(Cache Hit)\n"
+                <<std::endl;
+                std::cout << "\n---------------------------------------------------\n"
                 <<std::endl;
             }
         }

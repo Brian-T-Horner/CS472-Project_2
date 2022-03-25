@@ -9,8 +9,8 @@
 // 3/24/2022 - Added getSingleData function
 
 
-#ifndef PROJECT2_WORD_H
-#define PROJECT2_WORD_H
+#ifndef WORD_H
+#define WORD_H
 
 
 class Word {
@@ -52,4 +52,4 @@ private:
 };
 
 
-#endif //PROJECT2_WORD_H
+#endif

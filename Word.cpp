@@ -6,6 +6,7 @@
 // 3/22/2022 - Added default constructor and get functions
 // 3/23/2022 - Added overwriteData, displayWord, writeBackData and writeSingleData
 // 3/24/2022 - Added getSingleData function
+// 3/24/2022 - Added comments
 
 // Standard Library Includes
 #include <iostream>
@@ -43,9 +44,14 @@ void Word::loadData(short * mainMem, unsigned short address) {
 
 
 void Word::writeBackData(short *mainMem){
+    //  Write back data if dirty is 1
+
+    // Calc beginning and end of write back address
     unsigned short writeBackStart = (this->tag<<8) + (this->slot<<4) + 0x0;
     unsigned short writeBackEnd = writeBackStart + 0xF;
     unsigned int dataIndex{0};
+
+    // Loop to send data back to main mem
     for(unsigned short i = writeBackStart; i<writeBackEnd +1; i++){
         mainMem[i] = this->data[dataIndex];
         dataIndex++;
@@ -54,6 +60,7 @@ void Word::writeBackData(short *mainMem){
 }
 
 void Word::writeSingleData(unsigned short address, short data) {
+    // Overwrite a single data offset
     unsigned short dataOffset = 0x00F & address;
     this->data[dataOffset] = data;
     this->dirtyBit = 1;
@@ -68,6 +75,7 @@ unsigned short Word::getValidBit() const {return this-> validBit;}
 unsigned short Word::getDirtyBit() const {return this->dirtyBit;}
 
 unsigned short Word::getSingleData(unsigned short address) const{
+    // Get single item of data from offset
     unsigned short mask = 0x00F;
     unsigned short offset = address & mask;
     unsigned int returnValue = this->data[offset];
@@ -79,6 +87,7 @@ unsigned short Word::getSingleData(unsigned short address) const{
 
 // --- Print Function ---
 void Word::printData() const{
+    // Testing function for printing a word of data
     std::cout << "Printing array of data location at cache slot " <<std::hex
                  <<std::uppercase <<this->slot<<": "<<std::endl;
     for (unsigned int i{0}; i<16; i++){
@@ -87,11 +96,12 @@ void Word::printData() const{
 }
 
 void Word::displayWord() const{
+    // Display slot, valid, dirty, tag and data for display function
     std::cout << std::hex<<std::uppercase << this->slot << "\t";
     std::cout << this->validBit << "\t" <<this->dirtyBit <<"\t";
     std::cout << this->tag <<"\t\t";
     for(unsigned int i{0}; i<0xF+0x1; i++){
-        std::cout << this->data[i] << "    ";
+        std::cout << this->data[i] << "   ";
     }
     std::cout<<std::endl;
 };
