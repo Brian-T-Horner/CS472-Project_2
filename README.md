@@ -1,8 +1,8 @@
-**Boston University CS - 472 Project 2
+Boston University CS - 472 Project 2
 
 Cache simulation written in C++
 
---- Project Details ---**
+--- Project Details ---
 
 You are to design and implement a software simulation of a cache memory subsystem. You can
 use any language. Note that any real cache is invisible to software. This will be a simulation of
