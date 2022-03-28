@@ -2,7 +2,7 @@ Boston University CS - 472 Project 2
 
 Cache simulation written in C++
 
---- Project Details ---
+--- Project Requirments ---
 
 You are to design and implement a software simulation of a cache memory subsystem. You can
 use any language. Note that any real cache is invisible to software. This will be a simulation of
@@ -12,4 +12,5 @@ real cache. Your "main memory" will be a 2K array. You will implement a direct-m
 have 16 slots.
 
 
+--- Notes ---
 Tests included in .txt file but hardcoded into program for ease of convience.
